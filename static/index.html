@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FastAPI Demo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+  <div class="container mx-auto px-4 py-8">
+    <!-- Hero Section -->
+    <div class="text-center mb-12 bg-gradient-to-r from-blue-50 to-indigo-50 p-8 rounded-lg shadow-sm">
+      <h1 class="text-4xl font-bold text-gray-800 mb-2">Let Your Apps Blossom</h1>
+      <p class="text-xl text-gray-600 mb-6 max-w-3xl mx-auto">Deploy any application to your own servers. Save time and money with Blossom's simple deployment platform.</p>
+      <div class="flex justify-center gap-4 mb-6">
+        <a href="https://docs.blossom-cloud.com" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+          📖 Documentation
+        </a>
+        <a href="https://www.blossom-cloud.com/quickstarts" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+          🚀 Quickstarts
+        </a>
+      </div>
+      <a href="https://blossom-cloud.com" target="_blank" class="text-indigo-600 hover:text-indigo-800 font-medium inline-flex items-center">
+        Learn more about Blossom
+        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Demo Section -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+      <h2 class="text-2xl font-semibold mb-4 text-center">FastAPI Demo</h2>
+      <p class="text-gray-600 mb-6 text-center">This simple <a href="https://fastapi.tiangolo.com/" target="_blank" class="text-indigo-600 hover:text-indigo-800 font-medium">FastAPI</a> app demonstrates how easy it is to deploy Python applications on <a href="https://blossom-cloud.com" target="_blank" class="text-indigo-600 hover:text-indigo-800 font-medium">Blossom</a>.</p>
+
+      <div class="grid md:grid-cols-2 gap-8">
+        <!-- Greeting Card -->
+        <div class="bg-gray-50 rounded-lg p-6">
+          <h3 class="text-xl font-semibold mb-4">Greeting Generator</h3>
+          <div class="space-y-4">
+            <input type="text" id="nameInput" placeholder="World"
+              class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <button onclick="getGreeting()"
+              class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">
+              Get Greeting
+            </button>
+            <div id="greetingResult" class="mt-4 p-4 bg-white rounded-lg hidden">
+              <p class="text-gray-700"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Echo Card -->
+        <div class="bg-gray-50 rounded-lg p-6">
+          <h3 class="text-xl font-semibold mb-4">Echo Service</h3>
+          <div class="space-y-4">
+            <textarea id="echoInput" placeholder="Hello, Echo!"
+              class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 h-32"></textarea>
+            <button onclick="sendEcho()"
+              class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">
+              Send Message
+            </button>
+            <div id="echoResult" class="mt-4 p-4 bg-white rounded-lg hidden">
+              <p class="text-gray-700"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- API Documentation Section -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8 text-center">
+      <h2 class="text-2xl font-semibold mb-4">Interactive API Documentation</h2>
+      <p class="text-gray-600 mb-6">Explore and test the API endpoints using the built-in Swagger UI or ReDoc.</p>
+      <div class="flex justify-center gap-4">
+        <a href="/docs" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+          📚 Swagger UI
+        </a>
+        <a href="/redoc" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+          📖 ReDoc
+        </a>
+      </div>
+    </div>
+
+    <!-- Cost Savings Section -->
+    <div class="bg-white rounded-lg shadow-md p-8 text-center">
+      <h2 class="text-2xl font-semibold mb-4">Discover Your Savings 💵</h2>
+      <p class="text-gray-600 mb-6">See how much you can save with the cost calculator. Compare deployment costs and optimize your budget.</p>
+      <a href="https://www.blossom-cloud.com/pricing/calculator" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+        💰 Calculate Savings
+      </a>
+    </div>
+
+    <!-- Status Bar -->
+    <div id="statusBar" class="fixed bottom-0 left-0 right-0 bg-gray-800 text-white p-4 text-center hidden">
+      <p class="text-sm"></p>
+    </div>
+  </div>
+
+  <script>
+    async function getGreeting() {
+      const name = document.getElementById('nameInput').value;
+      const url = name ? `/api/hello?name=${encodeURIComponent(name)}` : '/api/hello';
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        const resultDiv = document.getElementById('greetingResult');
+        resultDiv.querySelector('p').textContent = data.message;
+        resultDiv.classList.remove('hidden');
+
+        showStatus('Greeting received successfully!', 'success');
+      } catch (error) {
+        showStatus('Error getting greeting', 'error');
+      }
+    }
+
+    async function sendEcho() {
+      const messageInput = document.getElementById('echoInput');
+      const message = messageInput.value || messageInput.placeholder;
+
+      try {
+        const response = await fetch('/api/echo', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ message })
+        });
+
+        const data = await response.json();
+
+        const resultDiv = document.getElementById('echoResult');
+        resultDiv.querySelector('p').textContent = JSON.stringify(data, null, 2);
+        resultDiv.classList.remove('hidden');
+
+        showStatus('Message echoed successfully!', 'success');
+      } catch (error) {
+        showStatus('Error sending message', 'error');
+      }
+    }
+
+    function showStatus(message, type) {
+      const statusBar = document.getElementById('statusBar');
+      statusBar.querySelector('p').textContent = message;
+      statusBar.classList.remove('hidden');
+      statusBar.classList.remove('bg-red-600', 'bg-green-600');
+      statusBar.classList.add(type === 'success' ? 'bg-green-600' : 'bg-red-600');
+
+      setTimeout(() => {
+        statusBar.classList.add('hidden');
+      }, 3000);
+    }
+  </script>
+</body>
+
+</html>
